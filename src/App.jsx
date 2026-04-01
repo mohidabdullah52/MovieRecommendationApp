@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Search from './components/search.jsx'
 import MovieCard from './components/MovieCard.jsx'
 import { useDebounce } from 'react-use';
+import Spinner from './components/spinner.jsx'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_ACCESS_TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN
-const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
+const TMDB_ACCESS_TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN || "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlZjFjMDllZDEwMjYxYWQ0ZTc0YjZhMjViMzQ3NzBiYyIsIm5iZiI6MTc3NDYzMTU3Mi44MDE5OTk4LCJzdWIiOiI2OWM2YmE5NDQ1YzZiZmM2YWU4OWJkZjQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.z-3bYZJIQDVEXApwc2lO3QzDuGvHVnTTSW_5EdYLspA"
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || "ef1c09ed10261ad4e74b6a25b34770bc"
 
 const API_OPTIONS = {
   method: 'GET',
@@ -80,7 +81,7 @@ const App = () => {
         <section className='all-movies'>
           <h2 className='mt-[40px]'>All Movies</h2>
           {isLoading? (
-            <p className='text-white'>loading ...</p>
+          <div className="loader"></div>
           ) : errorMessage ? (
             <p className='text-red-500'>Error:{errorMessage}</p>
           ): (
