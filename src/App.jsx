@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Search from './components/search.jsx'
 import MovieCard from './components/MovieCard.jsx'
 import { useDebounce } from 'react-use';
@@ -23,6 +23,7 @@ const App = () => {
   const[movieList,setMovieList] = useState([]);
   const[isLoading,setIsLoading] = useState(false);
   const [debouncedSearchTerm,setDebouncedSearchTerm] = useState('');
+  const [ratingSort,setRatingSort] = useState(false);
 
   useDebounce(
     () => setDebouncedSearchTerm(searchTerm), 1000, [searchTerm]
@@ -57,11 +58,16 @@ const App = () => {
         setIsLoading(false)
       })
   }
-
   useEffect(() => {
     fetchMovies(debouncedSearchTerm)
   }, [debouncedSearchTerm])
 
+  const displayedMovies = useMemo(() => {
+    if (!ratingSort) return movieList
+    return [...movieList].sort(
+      (a, b) => (b?.vote_average ?? 0) - (a?.vote_average ?? 0)
+    )
+  }, [movieList, ratingSort])
   return (
     <main>
       <div className='pattern'/>
@@ -80,13 +86,14 @@ const App = () => {
 
         <section className='all-movies'>
           <h2 className='mt-[40px]'>All Movies</h2>
+          <button className='bg-purple-500 text-white px-4 py-2 rounded-md' onClick={() => setRatingSort(!ratingSort)}>Sort by Rating</button>
           {isLoading? (
           <div className="loader"></div>
           ) : errorMessage ? (
             <p className='text-red-500'>Error:{errorMessage}</p>
           ): (
             <ul>
-              {movieList.map((movie) => (
+              {displayedMovies.map((movie) => (
                 <li key={movie.id}>
                   <MovieCard movie={movie} />
                 </li>
